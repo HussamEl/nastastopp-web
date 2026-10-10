@@ -3,9 +3,9 @@
 // and fill it on the server only (hPanel → File Manager). The API finds it by walking up from its
 // own folder.
 return [
-    // MySQL from hPanel → Databases.
-    'db_dsn' => 'mysql:host=localhost;dbname=u000000000_nasta;charset=utf8mb4',
-    'db_user' => 'u000000000_nasta',
+    // MySQL from hPanel → Databases (names in docs/ACCOUNTS.md).
+    'db_dsn' => 'mysql:host=localhost;dbname=u840798620_nastastopp;charset=utf8mb4',
+    'db_user' => 'u840798620_nastastopp_api',
     'db_pass' => '',
 
     // Google: one key for the Routes API (server only), one for the Maps JavaScript API (sent to

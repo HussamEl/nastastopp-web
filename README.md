@@ -8,7 +8,7 @@
 
 ## التركيب على Hostinger (مرة واحدة)
 
-1. **قاعدة البيانات:** من hPanel ← Databases ← MySQL Databases أنشئ قاعدة ومستخدماً.
+1. **قاعدة البيانات:** من hPanel ← Databases ← MySQL Databases أنشئ القاعدة `nastastopp` والمستخدم `nastastopp_api` (يضيف Hostinger قبلهما `u840798620_`). المستخدم للخادم وحده، لا لك ولا للسائقين، وكلمة سره من مولّد hPanel. كل الأسماء ومن يملكها في `docs/ACCOUNTS.md`.
 2. **النشر من GitHub:** من hPanel ← Advanced ← Git، أضف المستودع `HussamEl/nastastopp-web`، الفرع `main`، ومسار التركيب `nastastopp` (أي `public_html/nastastopp`)، وفعّل النشر التلقائي (Auto deployment) والصق رابط الـ webhook في GitHub كما يطلب.
 3. **الدومينات الفرعية:** من Domains ← Subdomains:
    - `api` ومجلده `public_html/nastastopp/api`
