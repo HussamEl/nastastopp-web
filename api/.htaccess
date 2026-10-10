@@ -1,0 +1,9 @@
+Require all granted
+Options -Indexes
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+# The Authorization header reaches PHP behind LiteSpeed/Apache.
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1

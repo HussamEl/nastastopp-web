@@ -1,0 +1,3 @@
+nastastopp-config.php
+*.sqlite
+/vendor/

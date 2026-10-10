@@ -1,0 +1,2 @@
+# The repository is deployed whole; only api/, admin/ and site/ are served (each opens itself).
+Require all denied

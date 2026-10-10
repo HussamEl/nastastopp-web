@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nästa Stopp</title>
+<meta name="description" content="Nästa Stopp: exakta adresser, smarta rutter och en skärm för passagerarna. För taxi, leveranser och logistik.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;700&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap">
+<style>
+:root { --bg: #05070a; --fg: #f3f5f8; --muted: #a0a8b3; --accent: #6ea8ff; --gold: #ffcc33; --edge: #1d222a;
+  --display: "Barlow Semi Condensed", "Arial Narrow", sans-serif; --body: "Atkinson Hyperlegible Next", system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 var(--body); }
+main { max-width: 1040px; margin: 0 auto; padding-inline: 20px; padding-block: 48px 64px; display: grid; gap: 56px; }
+.brand { font: 700 1.1rem var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(3rem, 9vw, 6.5rem)/0.95 var(--display); margin: 8px 0 0; text-wrap: balance; }
+h1 .next { color: var(--gold); display: block; font-size: .42em; letter-spacing: .3em; }
+.lead { font-size: 1.2rem; color: var(--muted); max-width: 46ch; margin: 20px 0 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.item { border-top: 2px solid var(--edge); padding-top: 14px; }
+.item h2 { font: 700 1.5rem var(--display); margin: 0 0 6px; }
+.item p { margin: 0; color: var(--muted); }
+.item .tag { font: 700 .8rem var(--body); color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--edge); padding-top: 16px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">Nästa Stopp</div>
+    <h1><span class="next">NÄSTA</span>Rätt adress. Varje stopp.</h1>
+    <p class="lead">Exakta adresser utan gissningar, rutter i rätt ordning och en lugn skärm för passagerarna. Byggt av en förare, för förare.</p>
+  </header>
+  <section class="grid" aria-label="Produkter">
+    <div class="item"><span class="tag">Taxi · Färdtjänst</span><h2>Nästa Stopp Taxi</h2><p>Förarens app läser resorna, ordnar stoppen och säger nästa stopp. Surfplattan visar tid och adress för passagerarna.</p></div>
+    <div class="item"><span class="tag">Leverans · Post</span><h2>Nästa Stopp Leverans</h2><p>Rutter för paket och post med exakta adresser och ingångar, så föraren hittar rätt dörr första gången.</p></div>
+    <div class="item"><span class="tag">API</span><h2>Nästa Stopp Adress</h2><p>Adresser och ortnamn från Lantmäteriet, kontrollerade mot postnummer och ort. En ort gissas aldrig.</p></div>
+  </section>
+  <footer>
+    Nästa Stopp · Karlstad, Värmland · Adresser och ortnamn: © Lantmäteriet (CC BY 4.0). Kartdata: © OpenStreetMap-bidragsgivare.
+  </footer>
+</main>
+</body>
+</html>
