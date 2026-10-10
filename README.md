@@ -17,7 +17,7 @@
 4. **SSL** للثلاثة من Security ← SSL.
 5. **ملف الأسرار:** من File Manager، انسخ `config.example.php` إلى المجلد **فوق** `public_html` باسم `nastastopp-config.php`، واملأه بنفسك: بيانات القاعدة، مفتاح Google للطرق، مفتاح Google للخريطة، مفتاح mapmap. **لا تلصق أي مفتاح في المحادثة.**
 6. **كلمة سر الإدارة:** افتح `https://admin.nastastopp.se/`: أول مرة يطلب كلمة سر مرتين ويعطيك سطراً واحداً تضعه في الملف مكان `admin_password_hash`. ثم ادخل بها.
-7. افتح `https://api.nastastopp.se/v1/health`: يجب أن يظهر `{"ok":true}`.
+7. افتح `https://api.nastastopp.se/v1/health`: يجب أن يظهر `{"ok":true,…}`. وإن ظهر `"config":false` فملف الأسرار غير موجود في مكانه، و`"database":false` فبيانات القاعدة فيه غير صحيحة.
 
 ## الاستعمال
 - في `admin.nastastopp.se` أنشئ رمزاً لكل جهاز (8 أحرف، صالح 7 أيام، مرة واحدة)، ويكتبه السائق مرة في التطبيق.

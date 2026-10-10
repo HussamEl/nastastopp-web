@@ -20,7 +20,8 @@ Roles:
 | Admin page password | admin.nastastopp.se | Owner only | Owner's password manager; its hash in `nastastopp-config.php` |
 | Device codes | 8 letters and digits, made on the admin page | One device each, once, 7 days | Only shown once on the admin page |
 | Device labels | `<role>-<car>`: `tablet-40274`, `phone-40274` | Device | — (never a passenger's name) |
-| Git deploy | Hostinger → Advanced → Git: `HussamEl/nastastopp-web`, branch `main`, path `nastastopp` | Server | — |
+| Git deploy | Hostinger → Advanced → Git: `HussamEl/nastastopp-web`, branch `main`, directory `public_html/nastastopp`, auto-deployment on: every push to `main` goes live | Server | — |
+| Hostinger GitHub App | Installed on `HussamEl`, "Only select repositories": `Eldebosh` and `nastastopp-web` (never the app's repository) | Owner | GitHub → Settings → Applications |
 | Subdomains | `api.nastastopp.se` → `public_html/nastastopp/api`, `admin.nastastopp.se` → `public_html/nastastopp/admin`; `nastastopp.se` → `public_html/nastastopp/site` | — | — |
 | Secrets file | `nastastopp-config.php`, one folder above `public_html` | Server | Written by the owner in File Manager |
 | Android signing key | `nastastopp-release.jks` | Owner | Owner's private backup; `~/.nastastopp-signing/` on the build machine |

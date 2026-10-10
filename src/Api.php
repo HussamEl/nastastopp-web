@@ -29,9 +29,6 @@ final class Api
         if ($method === 'POST' && $path === '/v1/enroll') {
             return $this->enroll($body);
         }
-        if ($method === 'GET' && $path === '/v1/health') {
-            return self::json(200, ['ok' => true]);
-        }
 
         $token = preg_match('/^Bearer\s+([0-9a-f]{64})$/', $headers['authorization'] ?? '', $m) ? $m[1] : null;
         $device = $token === null ? null : $this->store->device($token);
