@@ -1,7 +1,7 @@
 # nastastopp-web: working rules
 
 The server and site of Nästa Stopp, on Hostinger Business Web Hosting (PHP 8, MySQL, Git deploy):
-- `api/`: api.nastastopp.se. Enrolled devices ask for their ways and travel times here; the server asks Google (Routes API) or mapmap.ai with the company's own keys.
+- `api/`: api.nastastopp.se. An enrolled tablet gets its map key here (`GET /v1/config`) and asks for its ways and travel times; the server asks Google (Routes API) or mapmap.ai with the company's own keys. A device leaves with `POST /v1/leave` (the app's Disconnect).
 - `admin/`: the owner's page. It creates codes for new devices, lists devices and their daily requests, and stops a device.
 - `site/`: nastastopp.se, the public page.
 - `src/`: the code; `tests/run.php` is its tests (SQLite in memory, a fake Google/mapmap): `php tests/run.php` must print "All passed".
@@ -20,9 +20,15 @@ The project is built to be sold one day to a large company: everything must pass
 
 ## Hard rules
 - **No secret in git, code, logs or chat.** Keys, the database password and the admin password's hash live only in `nastastopp-config.php`, one folder above `public_html`, written by Hussam on the server (`config.example.php` shows its shape). Never ask him to paste one here.
-- **No key ever reaches a device**, except the Maps JavaScript key, which a tablet's map page needs; that key is restricted in Google Cloud to the Maps JavaScript API.
-- **The server keeps nothing a request carries**: no position, point, address or name, no body, nothing logged. It keeps only devices (label, role, token hash), unused codes (hash) and counts of requests per device per day per service.
-- Tokens and codes are stored only as SHA-256. A code works once, for 7 days.
+- **No key ever reaches a device**, except the Maps JavaScript key, which a tablet's map page needs; that key is restricted in Google Cloud to the Maps JavaScript API and to the website `https://map.nastastopp.se/*` (the origin the app loads its map page under; the name is never served).
+- **Only tablets get the map key and the ways** (a phone gets 403 `role`). Any device may enroll and leave.
+- **The server keeps nothing a request carries**: no position, point, address or name, no body, nothing logged. It keeps only devices (label, role, token hash, active, when made and last seen), unused codes (hash) and counts of requests per device per day per service. A Google body may carry a stop's address when the stop has no point: it is passed on, never kept.
+- Tokens and codes are stored only as SHA-256. A code works once, for 7 days. A stopped device (the owner's Stop, or its own `/v1/leave`) gets 403 `stopped`; a token no device holds gets 401 `not-enrolled`.
 - Everything is HTTPS (each folder's `.htaccess`); the repository root denies everything else.
-- TLS is always verified when the server asks Google or mapmap.
-- Only these are passed on: a Google field mask of letters, digits, `_ . , *`; a mapmap path of points only, and its `overview`, `geometries`, `steps` options.
+- TLS is always verified when the server asks Google or mapmap; curl follows no redirect and speaks only HTTPS.
+- Only these are passed on, each checked before the request counts:
+  - to Google, a field mask that is exactly one of the app's two (`Api::ROUTE_FIELDS`, `Api::MATRIX_FIELDS`), and a body of only the fields the app sends: driving, each place a point or an address, at most 10 stops between, at most 100 answers in a matrix (so the requests stay in Google's basic tier);
+  - to mapmap, a body of points only, never a point in a URL a device asks, so none reaches Hostinger's access log (`POST /v1/mapmap/route` with `points` checked pair by pair, and its `overview`, `geometries`, `steps` options, which the server then puts in mapmap's own route URL; a matrix of `{lat, lon}` only).
+- **The masks and bodies couple the app and the server.** They are copied byte for byte from the app's `core/nav/RoutesApi.kt` (and `tests/run.php` copies them again); the app's `WayRequestsTest` copies the server's. A change in the app's requests needs this server changed and deployed first, or every such request gets 400.
+- **The server's own refusals carry `X-Nasta-Error`**, a fixed word from `Api::ERRORS` (never input), and the daily limit also `Retry-After` (the seconds to the next UTC midnight). Google's and mapmap's answers are passed on as they came, without it, so the app never takes their 401 or 429 for the server's.
+- A request counts only after every check (token, role, size, mask, body, the server's key) has passed, and a count never passes the device's daily limit for that service (`Store::count`, one atomic update).

@@ -8,7 +8,8 @@ use PDO;
 /**
  * The devices, their enrollment codes and how many requests each made a day. Nothing else: no
  * names of passengers, no addresses, no positions, no request bodies. Tokens and codes are kept
- * only as their SHA-256.
+ * only as their SHA-256. A device row holds its label, role, token hash, whether it is active, and
+ * when it was made and last seen.
  */
 final class Store
 {
@@ -75,8 +76,13 @@ final class Store
         return $code;
     }
 
-    /** Enrolls a device with [code]: its token (returned once), or null for an unknown or expired code. */
-    public function enroll(string $code, string $role): ?string
+    /**
+     * Enrolls a device with [code]: its token (returned once) and its label, or null for an unknown
+     * or expired code.
+     *
+     * @return array{token: string, label: string}|null
+     */
+    public function enroll(string $code, string $role): ?array
     {
         $hash = hash('sha256', strtoupper(trim($code)));
         $this->db->beginTransaction();
@@ -88,23 +94,34 @@ final class Store
                 $this->db->rollBack();
                 return null;
             }
-            // A code is used once.
-            $this->db->prepare('DELETE FROM codes WHERE code_hash = ?')->execute([$hash]);
+            // A code is used once: only the request whose DELETE took the row enrolls. Two at once
+            // may both read it (a plain SELECT does not lock), but only one deletes it.
+            $taken = $this->db->prepare('DELETE FROM codes WHERE code_hash = ?');
+            $taken->execute([$hash]);
+            if ($taken->rowCount() !== 1) {
+                $this->db->rollBack();
+                return null;
+            }
             $token = bin2hex(random_bytes(32));
             $this->db->prepare('INSERT INTO devices (token_hash, label, role, active, created_at) VALUES (?, ?, ?, 1, ?)')
                 ->execute([hash('sha256', $token), $found['label'], $role, gmdate('Y-m-d H:i:s')]);
             $this->db->commit();
-            return $token;
+            return ['token' => $token, 'label' => (string) $found['label']];
         } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
     }
 
-    /** The active device holding [token], or null. */
+    /**
+     * The device holding [token], stopped or not (its `active` tells), or null when no device
+     * holds it.
+     *
+     * @return array{id: int|string, label: string, role: string, active: int|string}|null
+     */
     public function device(string $token): ?array
     {
-        $row = $this->db->prepare('SELECT id, label, role FROM devices WHERE token_hash = ? AND active = 1');
+        $row = $this->db->prepare('SELECT id, label, role, active FROM devices WHERE token_hash = ?');
         $row->execute([hash('sha256', $token)]);
         $found = $row->fetch();
         if ($found === false) {
@@ -114,19 +131,36 @@ final class Store
         return $found;
     }
 
-    /** Counts one request of [device] to [service] today; false once it is over [limit]. */
+    /**
+     * Counts one request of [device] to [service] today, unless it already made [limit]: true when
+     * counted, false when the limit is reached. A count never passes the limit, also when two
+     * requests come at once: the update itself checks it, and the first request of the day that
+     * finds its row just made by another runs the update once more.
+     */
     public function count(int $device, string $service, int $limit): bool
     {
+        if ($limit <= 0) {
+            return false;
+        }
         $day = gmdate('Y-m-d');
-        $update = $this->db->prepare('UPDATE usage_counts SET requests = requests + 1 WHERE device_id = ? AND day = ? AND service = ?');
-        $update->execute([$device, $day, $service]);
-        if ($update->rowCount() === 0) {
+        $update = $this->db->prepare('UPDATE usage_counts SET requests = requests + 1
+            WHERE device_id = ? AND day = ? AND service = ? AND requests < ?');
+        $update->execute([$device, $day, $service, $limit]);
+        if ($update->rowCount() > 0) {
+            return true;
+        }
+        try {
             $this->db->prepare('INSERT INTO usage_counts (device_id, day, service, requests) VALUES (?, ?, ?, 1)')
                 ->execute([$device, $day, $service]);
+            return true;
+        } catch (\PDOException $e) {
+            // SQLSTATE 23000: the row is there (at the limit, or made just now by another request).
+            if ($e->getCode() !== '23000') {
+                throw $e;
+            }
         }
-        $now = $this->db->prepare('SELECT requests FROM usage_counts WHERE device_id = ? AND day = ? AND service = ?');
-        $now->execute([$device, $day, $service]);
-        return (int) $now->fetchColumn() <= $limit;
+        $update->execute([$device, $day, $service, $limit]);
+        return $update->rowCount() > 0;
     }
 
     public function setActive(int $device, bool $active): void

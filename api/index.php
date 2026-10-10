@@ -30,12 +30,20 @@ try {
     $config = Config::load();
     $api = new Api($config, Store::open($config), [Api::class, 'curl']);
     $headers = array_change_key_case(function_exists('getallheaders') ? (getallheaders() ?: []) : [], CASE_LOWER);
+    // Where the server does not give every header to getallheaders(), the two the API reads.
     if (!isset($headers['authorization']) && isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $headers['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
     }
-    [$status, $body] = $api->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $path, $_GET, $headers, file_get_contents('php://input') ?: '');
+    if (!isset($headers['x-goog-fieldmask']) && isset($_SERVER['HTTP_X_GOOG_FIELDMASK'])) {
+        $headers['x-goog-fieldmask'] = $_SERVER['HTTP_X_GOOG_FIELDMASK'];
+    }
+    [$status, $body, $extra] = $api->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $path, $headers, file_get_contents('php://input') ?: '');
 } catch (Throwable) {
-    [$status, $body] = Api::json(500, ['error' => 'server']);
+    [$status, $body, $extra] = Api::json(500, ['error' => 'server'], 'server');
+}
+// The server's own headers only (X-Nasta-Error, Retry-After): fixed words and numbers, never input.
+foreach ($extra as $name => $value) {
+    header($name . ': ' . $value);
 }
 http_response_code($status);
 echo $body;

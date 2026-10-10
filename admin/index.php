@@ -106,10 +106,10 @@ table { width: 100%; border-collapse: collapse; font-size: .92rem; } td, th { pa
 <?php else: ?>
 <section>
   <h2>رمز لجهاز جديد</h2>
-  <p class="muted">يُكتب مرة واحدة في التطبيق، صالح 7 أيام، ولا يُعرض مرة ثانية.</p>
+  <p class="muted">اسم الجهاز: <code dir="ltr">tablet-</code> ثم رقم السيارة. الرمز يُكتب مرة واحدة في التطبيق، صالح 7 أيام، ولا يُعرض مرة ثانية.</p>
   <form method="post">
     <input type="hidden" name="csrf" value="<?= $csrf ?>"><input type="hidden" name="do" value="code">
-    <input name="label" placeholder="اسم الجهاز: تابلت السيارة 40274" maxlength="80" required>
+    <input name="label" placeholder="tablet-40274" dir="ltr" maxlength="80" required>
     <button>أنشئ رمزاً</button>
   </form>
   <?php if ($newCode !== null): ?><p class="code"><?= $h($newCode) ?></p><?php endif; ?>
