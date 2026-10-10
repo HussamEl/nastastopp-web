@@ -8,6 +8,7 @@ The server and site of Nästa Stopp, on Hostinger Business Web Hosting (PHP 8, M
 
 ## The user
 Hussam, the owner, writes Arabic: reply in Arabic, concisely. The Android app is in `HussamEl/S20Ultra` (its own CLAUDE.md has the app's hard rules).
+The laptop session (Claude Code on Hussam's computer, with his browser) carries out setup steps in hPanel and GitHub. Claude coordinates with it directly on `HussamEl/S20Ultra` PR #1 (`CLAUDE REQUEST <topic>`), without asking Hussam to relay, and tells him what both did. Signing in, passwords, keys, payments and terms stay Hussam's alone.
 
 ## Professional standard (decided by the owner)
 The project is built to be sold one day to a large company: everything must pass its engineers' review.
