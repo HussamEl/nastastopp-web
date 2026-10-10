@@ -30,6 +30,11 @@ final class Api
             return $this->enroll($body);
         }
 
+        // A path the API does not have is "unknown" for everyone, before any token is looked at.
+        if (!self::isRoute($method, $path)) {
+            return self::json(404, ['error' => 'unknown']);
+        }
+
         $token = preg_match('/^Bearer\s+([0-9a-f]{64})$/', $headers['authorization'] ?? '', $m) ? $m[1] : null;
         $device = $token === null ? null : $this->store->device($token);
         if ($device === null) {
@@ -61,6 +66,17 @@ final class Api
             return $this->counted($device, 'mapmap_matrix', fn () => $this->mapmap('POST', 'https://api.mapmap.ai/matrix', $body));
         }
         return self::json(404, ['error' => 'unknown']);
+    }
+
+    /** The requests an enrolled device may make (enrolling itself is checked before). */
+    private static function isRoute(string $method, string $path): bool
+    {
+        return match (true) {
+            $method === 'GET' && $path === '/v1/config',
+            $method === 'POST' && in_array($path, ['/v1/google/routes', '/v1/google/matrix', '/v1/mapmap/matrix'], true),
+            $method === 'GET' && (bool) preg_match('#^/v1/mapmap/route/[-0-9.,;]+$#', $path) => true,
+            default => false,
+        };
     }
 
     private function enroll(string $body): array

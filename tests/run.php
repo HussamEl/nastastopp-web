@@ -35,6 +35,7 @@ $call = fn (string $m, string $p, array $h = [], string $b = '', array $q = []) 
 
 echo "Enrolling\n";
 check($call('GET', '/v1/config')[0] === 401, 'nothing without a token');
+check($call('GET', '/src/Api.php')[0] === 404 && $call('GET', '/.git/config')[0] === 404, 'a path the API does not have is unknown, token or not');
 check($call('POST', '/v1/enroll', [], '{"code":"NOPE2345","role":"tablet"}')[0] === 403, 'an unknown code is refused');
 $code = $store->newCode('Tablet 40274');
 check((bool) preg_match('/^[A-HJ-NP-Z2-9]{8}$/', $code), 'a code is 8 readable letters and digits');
