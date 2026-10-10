@@ -18,6 +18,9 @@ The project is built to be sold one day to a large company: everything must pass
 - **Quality:** tests for every behaviour and a CI check on every push (`.github/workflows/tests.yml`); small commits with clear messages; docs that say what is and why (README for the owner in Arabic, CLAUDE.md and code comments in English).
 - **Licences and data:** every outside source has its licence and attribution in the repo; personal data is kept to the minimum the service needs (GDPR), never logged.
 
+## Current decision (by the owner)
+No Google Cloud project, billing or key for the company for now, and no key on the server: the tablet asks mapmap.ai by default with the driver's own mapmap key, and Google only with his own key on his own devices. The server's `/v1/config` answers `503 no-key` until keys are decided; moving routing and keys to the server is a later decision. The code for it stays ready and tested.
+
 ## Hard rules
 - **No secret in git, code, logs or chat.** Keys, the database password and the admin password's hash live only in `nastastopp-config.php`, one folder above `public_html`, written by Hussam on the server (`config.example.php` shows its shape). Never ask him to paste one here.
 - **No key ever reaches a device**, except the Maps JavaScript key, which a tablet's map page needs; that key is restricted in Google Cloud to the Maps JavaScript API and to the website `https://map.nastastopp.se/*` (the origin the app loads its map page under; the name is never served).

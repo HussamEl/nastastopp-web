@@ -11,10 +11,10 @@ Roles:
 | What | Name | Role | Where its secret lives |
 |---|---|---|---|
 | Company email | `admin@nastastopp.se` (Hostinger → Emails) | Owner | Owner's password manager |
-| Google Cloud project | `nastastopp-prod` | Owner (signs in with the company email) | Google account |
-| Google key for ways and travel times | `nastastopp-routes-server`: Routes API only, restricted to the server's IP | Server | `nastastopp-config.php` → `google_routes_key` |
-| Google key for the tablet's map | `nastastopp-maps-js-tablet`: Maps JavaScript API only; Website restriction: `https://map.nastastopp.se/*` | Device (tablets) | `nastastopp-config.php` → `google_maps_js_key`; a tablet keeps a copy sealed in its pass |
-| mapmap.ai key | `nastastopp-prod-server` | Server | `nastastopp-config.php` → `mapmap_key` |
+| Google Cloud project | `nastastopp-prod` — **not created for now** (decided by the owner: no keys on the server yet; the name is reserved) | Owner (signs in with the company email) | Google account |
+| Google key for ways and travel times | `nastastopp-routes-server`: Routes API only, restricted to the server's IP — **not created for now** (decided by the owner: no keys on the server yet; the name is reserved) | Server | `nastastopp-config.php` → `google_routes_key` |
+| Google key for the tablet's map | `nastastopp-maps-js-tablet`: Maps JavaScript API only; Website restriction: `https://map.nastastopp.se/*` — **not created for now** (decided by the owner: no keys on the server yet; the name is reserved) | Device (tablets) | `nastastopp-config.php` → `google_maps_js_key`; a tablet keeps a copy sealed in its pass |
+| mapmap.ai key | `nastastopp-prod-server` — **not created for now** (decided by the owner: no keys on the server yet; the name is reserved) | Server | `nastastopp-config.php` → `mapmap_key` |
 | MySQL database | `u840798620_nastastopp` (type `nastastopp`; Hostinger adds the prefix) | Server | — |
 | MySQL user | `u840798620_nastastopp_api` (type `nastastopp_api`) | Server only; the owner never signs in with it | `nastastopp-config.php` → `db_pass` (made by hPanel's generator, 24+ characters) |
 | Admin page password | admin.nastastopp.se | Owner only | Owner's password manager; its hash in `nastastopp-config.php` |
